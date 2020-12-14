@@ -155,7 +155,7 @@ void OpenGL::render()
 	
 	
 	glEnable(GL_DEPTH_TEST);
-	DrawAxes();
+	//DrawAxes();
 	//drawPlane();
 	
 	

@@ -299,47 +299,52 @@ void mouseWheelEvent(OpenGL *ogl, int delta)
 	camera.camDist += 0.01*delta;
 }
 
+int flag1 = 0;
+int flag2 = 0;
+int flag_der = 1;
+
 //обработчик нажатия кнопок клавиатуры
 void keyDownEvent(OpenGL *ogl, int key)
 {
-	if (key == 'L')
+	if (OpenGL::isKeyPressed('L'))
 	{
 		lightMode = !lightMode;
 	}
 
-	if (key == 'T')
+	if (OpenGL::isKeyPressed('T'))
 	{
 		textureMode = !textureMode;
 	}	   
 
-	if (key == 'R')
-	{
-		camera.fi1 = 1;
-		camera.fi2 = 1;
-		camera.camDist = 15;
-
-		light.pos = Vector3(1, 1, 3);
-	}
-
-	if (key == 'F')
+	if (OpenGL::isKeyPressed('F'))
 	{
 		light.pos = camera.pos;
 	}
 
-	if (key == 'S')
+	if (OpenGL::isKeyPressed('Z'))
 	{
-		frac.LoadShaderFromFile();
-		frac.Compile();
-
-		s[0].LoadShaderFromFile();
-		s[0].Compile();
-
-		cassini.LoadShaderFromFile();
-		cassini.Compile();
+		if (flag1 == 0)
+			flag1 = 1;
+		else
+			flag1 = 0;
 	}
 
-	if (key == 'Q')
-		Time = 0;
+	if (OpenGL::isKeyPressed('C'))
+	{
+		if (flag2 == 0)
+			flag2 = 1;
+		else	
+			flag2 = 0;
+	}
+
+	if (OpenGL::isKeyPressed('S'))
+	{
+		if (flag_der == 0)
+			flag_der = 1;
+		else
+			flag_der = 0;
+	}
+
 }
 
 void keyUpEvent(OpenGL *ogl, int key)
@@ -369,9 +374,22 @@ void DrawQuad()
 }
 
 
-ObjFile Poezd, Relsi, Earth, Vagon, monkey, Tree,Kust,QuadHouse;
 
-Texture Poezdtex;
+ObjFile QuadHouse;
+
+ObjFile LittleHouse;
+
+ObjFile Zabor;
+
+ObjFile Poezd, Relsi, Earth, Vagon;
+ObjFile Tree, Tree2, Kust;
+ObjFile Svetofor,Svetofor_red, Svetofor_green;
+ObjFile Budka, Budka_Okno, Stancia_Roof, Stancia_Floor2, Reklama, Budka_Dver;
+
+Texture QuadHouse_Tex, QuadHouse_SpecTex, QuadHouse_FonTex, Poezd_Tex, Earth_Tex,Earth_Normal, QuadHouse_Normal;
+Texture Svetofor_Tex, LittleHouse_Tex, LittleHouse_SpecTex, LittleHouse_FonTex;
+Texture Tex_Reklama;
+Texture Tex_Zabor;
 
 //выполняется перед первым рендером
 void initRender(OpenGL *ogl)
@@ -417,7 +435,7 @@ void initRender(OpenGL *ogl)
 	/*
 	//texture1.loadTextureFromFile("textures\\texture.bmp");   загрузка текстуры из файла
 	*/
-
+	glEnable(GL_TEXTURE0);
 
 	frac.VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
 	frac.FshaderFileName = "shaders\\frac.frag"; //имя файла фрагментного шейдера
@@ -436,37 +454,99 @@ void initRender(OpenGL *ogl)
 	s[0].Compile(); //компилируем
 
 	s[1].VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
-	s[1].FshaderFileName = "shaders\\textureShader.frag"; //имя файла фрагментного шейдера
+	s[1].FshaderFileName = "shaders\\Light_Color.frag"; //имя файла фрагментного шейдера
 	s[1].LoadShaderFromFile(); //загружаем шейдеры из файла
 	s[1].Compile(); //компилируем
 
-	s[2].VshaderFileName = "shaders\\v.vert";
-	s[2].FshaderFileName = "shaders\\TestFrag.frag";
+	s[2].VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
+	s[2].FshaderFileName = "shaders\\Color.frag"; //имя файла фрагментного шейдера
 	s[2].LoadShaderFromFile(); //загружаем шейдеры из файла
 	s[2].Compile(); //компилируем
 
+	s[3].VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
+	s[3].FshaderFileName = "shaders\\light_texture.frag"; //имя файла фрагментного шейдера
+	s[3].LoadShaderFromFile(); //загружаем шейдеры из файла
+	s[3].Compile(); //компилируем
+	
+	s[4].VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
+	s[4].FshaderFileName = "shaders\\light_Tex_Normal.frag"; //имя файла фрагментного шейдера
+	s[4].LoadShaderFromFile(); //загружаем шейдеры из файла
+	s[4].Compile(); //компилируем
+
+	s[5].VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
+	s[5].FshaderFileName = "shaders\\light_texture2.frag"; //имя файла фрагментного шейдера
+	s[5].LoadShaderFromFile(); //загружаем шейдеры из файла
+	s[5].Compile(); //компилируем
+
+	s[6].VshaderFileName = "shaders\\v.vert"; //имя файла вершинного шейдер
+	s[6].FshaderFileName = "shaders\\light_texture3.frag"; //имя файла фрагментного шейдера
+	s[6].LoadShaderFromFile(); //загружаем шейдеры из файла
+	s[6].Compile(); //компилируем
 
 	 //так как гит игнорит модели *.obj файлы, так как они совпадают по расширению с объектными файлами, 
 	 // создающимися во время компиляции, я переименовал модели в *.obj_m
-	loadModel("models\\paravoz.obj", &Poezd);
-	Poezdtex.loadTextureFromFile("textures//poezdtext.bmp");
-	Poezdtex.bindTexture();
+	
+	 loadModel("models\\Poezd.obj", &Poezd);
+	 Poezd_Tex.loadTextureFromFile("textures//Poezd_Tex.bmp");
+	 Poezd_Tex.bindTexture();
 
 
-	loadModel("models\\relsa.obj", &Relsi);
-	loadModel("models\\earth.obj", &Earth);
-	loadModel("models\\vagon.obj", &Vagon);
-	//loadModel("models\\monkey.obj_m", &monkey);
-	//loadModel("models\\Tree2.obj", &Tree);
-	//loadModel("models\\kust.obj", &Kust);
-	//loadModel("models\\QuadHouse.obj", &QuadHouse);
+	 loadModel("models\\QuadHouse.obj", &QuadHouse);
+	 QuadHouse_Tex.loadTextureFromFile("textures//Tex_QuadHouse.bmp");
+	 QuadHouse_Tex.bindTexture();
+	 glEnable(GL_TEXTURE1);
+	 QuadHouse_SpecTex.loadTextureFromFile("textures//SpecTex_QuadHouse.bmp");
+	 QuadHouse_SpecTex.bindTexture();
+	 glEnable(GL_TEXTURE2);
+	 QuadHouse_FonTex.loadTextureFromFile("textures//FonTex_QuadHouse.bmp");
+	 QuadHouse_FonTex.bindTexture();
 
+	 glEnable(GL_TEXTURE0);
 
-	//glActiveTexture(GL_TEXTURE0);
-	//loadModel("models\\monkey.obj_m", &monkey);
-	//monkeyTex.loadTextureFromFile("textures//tex.bmp");
-	//monkeyTex.bindTexture();
+	 loadModel("models\\LittleHouse.obj", &LittleHouse);		//маленький дом
+	 LittleHouse_Tex.loadTextureFromFile("textures//Tex_LittleHouse.bmp");
+	 LittleHouse_Tex.bindTexture();
+	 glEnable(GL_TEXTURE1);
+	 LittleHouse_SpecTex.loadTextureFromFile("textures//LittleHouse_SpecTex.bmp");
+	 LittleHouse_SpecTex.bindTexture();
+	 glEnable(GL_TEXTURE2);
+	 LittleHouse_FonTex.loadTextureFromFile("textures//LittleHouse_FonTex.bmp");
+	 LittleHouse_FonTex.bindTexture();
 
+	 glEnable(GL_TEXTURE0);
+
+	 loadModel("models\\Zabor.obj", &Zabor);
+	
+	 loadModel("models\\relsa.obj", &Relsi);		//рельсы
+
+	 loadModel("models\\earth.obj", &Earth);		//Земля
+	 Earth_Tex.loadTextureFromFile("textures//Earth_Tex.bmp");
+	 Earth_Tex.bindTexture();
+
+	 glEnable(GL_TEXTURE1);
+	 Earth_Normal.loadTextureFromFile("textures//Earth_Normal.bmp");
+	 Earth_Normal.bindTexture();
+
+	 glEnable(GL_TEXTURE0);
+	
+	loadModel("models\\svetofor.obj", &Svetofor);					//светофор
+	loadModel("models\\svetofor_red.obj", &Svetofor_red);
+	loadModel("models\\svetofor_green.obj", &Svetofor_green);
+	Svetofor_Tex.loadTextureFromFile("textures//Svetofor.bmp");
+	Svetofor_Tex.bindTexture();
+
+	loadModel("models\\Budka.obj", &Budka);			//станция
+	loadModel("models\\Budka_Okno.obj", &Budka_Okno);
+	loadModel("models\\Budka_Dver.obj", &Budka_Dver);
+	loadModel("models\\Stancia_Floor.obj", &Stancia_Roof);
+	loadModel("models\\Stancia_Floor2.obj", &Stancia_Floor2);
+	loadModel("models\\Reklama.obj", &Reklama);
+	Tex_Reklama.loadTextureFromFile("textures//Reklama.bmp");
+	Tex_Reklama.bindTexture();
+	
+	loadModel("models\\Tree.obj", &Tree);			//дерево
+	loadModel("models\\Tree2.obj", &Tree2);
+	loadModel("models\\kust.obj", &Kust);
 
 	tick_n = GetTickCount();
 	tick_o = tick_n;
@@ -546,36 +626,39 @@ Vector3 Bezye(double P0[], double P1[], double P2[], double t)
 	return D;
 }
 
+void Change_Material(double amb[], double dif[], double spec[], double sh)
+{
+	GLfloat _amb[] = { amb[0], amb[1], amb[2], 1 };
+	GLfloat _dif[] = { dif[0], dif[1] , dif[2],1 };
+	GLfloat _spec[] = { spec[0], spec[1], spec[2],1 };
+	GLfloat _sh = 0.4;
+
+	//фоновая
+	glMaterialfv(GL_FRONT, GL_AMBIENT, _amb);
+	//дифузная
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, _dif);
+	//зеркальная
+	glMaterialfv(GL_FRONT, GL_SPECULAR, _spec);
+	//размер блика
+	glMaterialf(GL_FRONT, GL_SHININESS, _sh);
+}
+
 void Relsi_path()
 {
 
-	double P1[] = { 0, -10, 1 };
-	double P2[] = { 3,-10, 1 };
-	double P3[] = { 8, -10, 1 };
-	double P4[] = { 25, -10, 1 };
-	double P5[] = { 25, -5, 1 };
-	double P6[] = { 25, 10, 1 };
-	double P7[] = { 25, 40, 1 };
-	double P8[] = { 20, 40, 1 };
-	double P9[] = { 5, 40, 1 };
-	double P10[] = { 0, 40, 1 };
-	double P11[] = { 0, 30, 1 };
-	double P12[] = { 0, 20.5, 1 };
-	double P13[] = { 0, 20, 1 };
-
-	//double P1[] = { 0, -12, 0 };
-	//double P2[] = { 1, -12, 0 };
-	//double P3[] = { 2, -12, 0 };
-	//double P4[] = { 10, -11, 0 };
-	//double P5[] = { 11, 0, 0 };
-	//double P6[] = { 11, 33, 0 };
-	//double P7[] = { 0, 33.5, 0 };
-	//double P8[] = { -11, 33, 0 };
-	//double P9[] = { -19.75, 23.85, 0 };
-	//double P10[] = { -20.15, 13, 0 };
-	//double P11[] = { -20.1, 1.95, 0 };
-	//double P12[] = { -11, -7, 0 };
-	//double P13[] = { 0, -6.85, 0 };
+	double P1[] = { 0, -10, 0.05 };
+	double P2[] = { 3,-10, 0.05 };
+	double P3[] = { 8, -10, 0.05 };
+	double P4[] = { 25, -10, 0.05 };
+	double P5[] = { 25, -5, 0.05 };
+	double P6[] = { 25, 10, 0.05 };
+	double P7[] = { 25, 40, 0.05 };
+	double P8[] = { 20, 40, 0.05 };
+	double P9[] = { 5, 40, 0.05 };
+	double P10[] = { 0, 40, 0.05 };
+	double P11[] = { 0, 30, 0.05 };
+	double P12[] = { 0, 20.5, 0.05 };
+	double P13[] = { 0, 20, 0.05 };
 
 	double P_0[] = { P1[0],P2[0],
 					 P3[0],P4[0],
@@ -623,6 +706,7 @@ void Relsi_path()
 		glTranslated(P.X(), P.Y(), P.Z());
 		glRotated(AngleOZ, 0, 0, 1);
 		glRotated(AngleOY, 0, 1, 0);
+		Shader::DontUseShaders();
 		Relsi.DrawObj();
 		glPopMatrix();
 		
@@ -631,19 +715,19 @@ void Relsi_path()
 void Relsi_path2()
 {
 
-	double P1[] = { 0, 20, 1 };
-	double P2[] = { 0, 19.5, 1 };
-	double P3[] = { 1, 15, 1 };
-	double P4[] = { 0, 0, 1 };
-	double P5[] = { -9, 0, 1 };
-	double P6[] = { -25, 20, 1 };
-	double P7[] = { -25, 15, 1 };
-	double P8[] = { -25, 0, 1 };
-	double P9[] = { -25, -20, 1 };
-	double P10[] = { -15, -9.5, 1 };
-	double P11[] = { -5, -9.5, 1 };
-	double P12[] = { -2, -10, 1 };
-	double P13[] = { 0, -10, 1 };
+	double P1[] = { 0, 20, 0.05 };
+	double P2[] = { 0, 19.5, 0.05 };
+	double P3[] = { 1, 15, 0.05 };
+	double P4[] = { 0, 0, 0.05 };
+	double P5[] = { -9, 0, 0.05 };
+	double P6[] = { -25, 20, 0.05 };
+	double P7[] = { -25, 15, 0.05 };
+	double P8[] = { -25, 0, 0.05 };
+	double P9[] = { -25, -20, 0.05 };
+	double P10[] = { -15, -9.5, 0.05 };
+	double P11[] = { -5, -9.5, 0.05 };
+	double P12[] = { -2, -10, 0.05 };
+	double P13[] = { 0, -10, 0.05 };
 
 	double P_0[] = { P1[0],P2[0],
 					 P3[0],P4[0],
@@ -691,63 +775,63 @@ void Relsi_path2()
 		glTranslated(P.X(), P.Y(), P.Z());
 		glRotated(AngleOZ, 0, 0, 1);
 		glRotated(AngleOY, 0, 1, 0);
+		Shader::DontUseShaders();
 		Relsi.DrawObj();
 		glPopMatrix();
 
 	}
 }
 
+int flag_animacia = 0;
+int location = 0 ;
 
+double amb[] = { 0.05, 0.05, 0.05,1 };
+double dif[] = { 0.5, 0.5 , 0.5,1 };
+double spec[] = { 0.7, 0.7, 0.7,1 };
+double sh = 0.4;
+
+//статический поезд
+void DrawningPoezd(double x, double y, double z, double angle)
+{
+	glPushMatrix();
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+
+	glEnable(GL_TEXTURE_2D);
+	Poezd_Tex.bindTexture();
+	Poezd.DrawObj();
+	glDisable(GL_TEXTURE_2D);
+
+	glPopMatrix();
+}
+//первая анимация движения поезда
 void Anim1_Poezd()
 {
+	t_max[0] += Time / 15; //t_max становится = 1 за 30 секунд
 
-	t_max[0] += Time / 30; //t_max становится = 1 за 10 секунд
-
-	if (t_max[0] > 1) t_max[0] = 0; //после обнуляется
-
-	double P1[] = { 0, -10, 1 };
-	double P2[] = { 3,-10, 1 };
-	double P3[] = { 8, -10, 1 };
-	double P4[] = { 25, -10, 1 };
-	double P5[] = { 25, -5, 1 };
-	double P6[] = { 25, 10, 1 };
-	double P7[] = { 25, 40, 1 };
-	double P8[] = { 20, 40, 1 };
-	double P9[] = { 5, 40, 1 };
-	double P10[] = { 0, 40, 1 };
-	double P11[] = { 0, 30, 1 };
-	double P12[] = { 0, 20.5, 1 };
-	double P13[] = { 0, 20, 1 };
-
-	//double P1[] = { 0, -6.85, 0 };
-	//double P2[] = { 11, -7, 0 };
-	//double P3[] = { 20.25, 2, 0 };
-	//double P4[] = { 20, 13, 0 };
-	//double P5[] = { 19.5, 23.8, 0 };
-	//double P6[] = { 11, 33, 0 };
-	//double P7[] = { 0, 33.5, 0 };
-	//double P8[] = { -11, 33, 0 };
-	//double P9[] = { -19.75, 23.85, 0 };
-	//double P10[] = { -20.15, 13, 0 };
-	//double P11[] = { -20.1, 1.95, 0 };
-	//double P12[] = { -11, -7, 0 };
-	//double P13[] = { 0, -6.85, 0 };
-
-	glBegin(GL_LINE_STRIP);
-	glVertex3dv(P1); //отрисовка векторов
-	glVertex3dv(P2);
-	glVertex3dv(P3);
-	glVertex3dv(P4);
-	glVertex3dv(P5);
-	glVertex3dv(P6);
-	glVertex3dv(P7);
-	glVertex3dv(P8);
-	glVertex3dv(P9);
-	glVertex3dv(P10);
-	glVertex3dv(P11);
-	glVertex3dv(P12);
-	glVertex3dv(P13);
-	glEnd();
+	if (t_max[0] > 1)
+	{
+		if (flag2 == 1)
+		{
+			DrawningPoezd(0, 20, 0, 270);
+			return;
+		}
+		flag_animacia = 1;
+		t_max[0] = 0; //после обнуляется
+	}
+	double P1[] = { 0, -10, 0 };
+	double P2[] = { 3,-10, 0 };
+	double P3[] = { 8, -10, 0 };
+	double P4[] = { 25, -10, 0 };
+	double P5[] = { 25, -5, 0 };
+	double P6[] = { 25, 10, 0 };
+	double P7[] = { 25, 40, 0 };
+	double P8[] = { 20, 40, 0 };
+	double P9[] = { 5, 40, 0 };
+	double P10[] = { 0, 40, 0 };
+	double P11[] = { 0, 30, 0 };
+	double P12[] = { 0, 20.5, 0 };
+	double P13[] = { 0, 20, 0 };
 
 
 	double P_0[] = { P1[0],P2[0],
@@ -772,12 +856,6 @@ void Anim1_Poezd()
 					 P11[2],P12[2],P13[2]
 	};
 
-	
-	//for (double t = 0; t <= t_max; t += 0.0001)
-	//{
-	//	
-	//	glVertex3dv(P_new); //Рисуем точку P
-	//}
 	
 	Vector3 P_old = Bezye(P_0, P_1, P_2, t_max[0] - 0.001);
 
@@ -793,63 +871,47 @@ void Anim1_Poezd()
 	double AngleOZ = acos(CosX) * 180 / PI * SinAngleZ;
 	double AngleOY = acos(VecP_P_old.Z()) * 180 / PI - 90;
 
-
 	glPushMatrix();
-
 	glTranslated(P.X(), P.Y(), P.Z());
 	glRotated(AngleOY, 0, 1, 0);
 	glRotated(AngleOZ, 0, 0, 1);
 
-	glPushMatrix();
-	glTranslated(-1, 0.05, 0);
-	
-	Vagon.DrawObj();
-	glPopMatrix();
 
+	glEnable(GL_TEXTURE_2D);
+	Poezd_Tex.bindTexture();
 	Poezd.DrawObj();
-	
+	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-
 }
-
+//вторая анимация движения поезда
 void Anim2_Poezd()
 {
+	t_max[1] += Time / 15; //t_max становится = 1 за 30 секунд
 
-	t_max[1] += Time / 30; //t_max становится = 1 за 10 секунд
+	if (t_max[1] > 1)
+	{
+		if (flag1 == 1)
+		{
+			DrawningPoezd(0, -10, 0, 0);
+			return;
+		}
+		flag_animacia = 0;
+		t_max[1] = 0; //после обнуляется
+	}
 
-	if (t_max[1] > 1) t_max[1] = 0; //после обнуляется
-
-	double P1[] = { 0, 20, 1 };
-	double P2[] = { 0, 19.5, 1 };
-	double P3[] = { 1, 15, 1 };
-	double P4[] = { 0, 0, 1 };
-	double P5[] = { -9, 0, 1 };
-	double P6[] = { -25, 20, 1 };
-	double P7[] = { -25, 15, 1 };
-	double P8[] = { -25, 0, 1 };
-	double P9[] = { -25, -20, 1 };
-	double P10[] = { -15, -9.5, 1 };
-	double P11[] = { -5, -9.5, 1 };
-	double P12[] = { -2, -10, 1 };
-	double P13[] = { 0, -10, 1 };
-
-
-	glBegin(GL_LINE_STRIP);
-	glVertex3dv(P1); //отрисовка векторов
-	glVertex3dv(P2);
-	glVertex3dv(P3);
-	glVertex3dv(P4);
-	glVertex3dv(P5);
-	glVertex3dv(P6);
-	glVertex3dv(P7);
-	glVertex3dv(P8);
-	glVertex3dv(P9);
-	glVertex3dv(P10);
-	glVertex3dv(P11);
-	glVertex3dv(P12);
-	glVertex3dv(P13);
-	glEnd();
-
+	double P1[] = { 0, 20, 0 };
+	double P2[] = { 0, 19.5, 0 };
+	double P3[] = { 1, 15, 0 };
+	double P4[] = { 0, 0, 0 };
+	double P5[] = { -9, 0, 0 };
+	double P6[] = { -25, 20, 0 };
+	double P7[] = { -25, 15, 0 };
+	double P8[] = { -25, 0, 0 };
+	double P9[] = { -25, -20, 0 };
+	double P10[] = { -15, -9.5, 0 };
+	double P11[] = { -5, -9.5, 0 };
+	double P12[] = { -2, -10, 0 };
+	double P13[] = { 0, -10, 0 };
 
 	double P_0[] = { P1[0],P2[0],
 					 P3[0],P4[0],
@@ -872,13 +934,6 @@ void Anim2_Poezd()
 					 P9[2],P10[2],
 					 P11[2],P12[2],P13[2]
 	};
-
-
-	//for (double t = 0; t <= t_max; t += 0.0001)
-	//{
-	//	
-	//	glVertex3dv(P_new); //Рисуем точку P
-	//}
 
 	Vector3 P_old = Bezye(P_0, P_1, P_2, t_max[1] - 0.001);
 
@@ -901,21 +956,429 @@ void Anim2_Poezd()
 	glRotated(AngleOY, 0, 1, 0);
 	glRotated(AngleOZ, 0, 0, 1);
 
-	glPushMatrix();
-	glTranslated(-1, 0.05, 0);
-
-	Vagon.DrawObj();
-	glPopMatrix();
-
+	glEnable(GL_TEXTURE_2D);
+	Poezd_Tex.bindTexture();
 	Poezd.DrawObj();
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
+//рисуем дерево
+void DrawninTree1()
+{
+	double coords[21][3] = {
+		{ -0.263,-0.167, 1.915 },
+		{ -0.208,-0.398, 1.915 },
+		{ 0.067,0.292, 1.674},
+		{ 0.341 ,-0.072, 1.731},
+		{ 0.253 ,0.092, 2.034},
+		{ -0.313 ,0.545, 2.08 },
+		{ -0.327 ,0.702, 2.10 },
+		{ -0.51 ,0.571, 2.202 },
+		{ 0.0311 ,0.410, 2.244 },
+		 { 0.0963 ,0.526, 2.296 },
+		 { -0.373 ,-0.061, 2.289 },
+		 { 0.070 ,-0.541, 2.452 },
+		 { 0.070 ,-0.716, 2.518 },
+		 { 0.071 ,-0.279, 2.694 },
+		 { -0.196 ,-0.260, 2.667 },
+		 { -0.443 ,-0.038, 2.582 },
+		 { -0.501 ,-0.033, 2.457 },
+		 { -0.086 ,0.088, 2.762 },
+		 { -0.2027 ,0.219, 2.689 },
+		 { -0.2815 ,0.184, 2.558 },
+		 { -0.3406 ,0.191, 2.626 },
+	};
+
+	glPushMatrix();
+
+	double amb[] = { 0, 0, 0 ,1 };
+	double dif[] = { 0.1, 0.35 , 0.1,1 };
+	double spec[] = { 0.45, 0.55, 0.45,1 };
+	double sh = 0.25;
+	Change_Material(amb, dif, spec, sh);
+
+	for (int i = 0; i <= 20; i++)
+	{
+			glPushMatrix();
+			glTranslated(coords[i][0], coords[i][1], coords[i][2]);
+			glRotated(180, 0, 0, 1);
+			Kust.DrawObj();
+			glPopMatrix();
+	}
+
+	double amb2[] = { 0, 0, 0, 1 };
+	double dif2[] = { 0.5, 0.5 , 0,1 };
+	double spec2[] = { 0.8, 0.27, 0.07,1 };
+	double sh2 = 0.25;
+	Change_Material(amb2, dif2, spec2, sh2);
+
+	Tree.DrawObj();
+
+
+	glPopMatrix();
+}
+//рисуем другое дерево
+void DrawninTree2()
+{
+	double coords[21][3] = {
+		{ 0.295,0.335, 1.448 },
+		{ 0.298,0.395, 1.658 },
+		{ 0.359,0.377, 1.759},
+		{ 0.307 ,0.147, 1.672},
+		{ 0.257 ,0.140, 1.795},
+		{ 0.377 ,0.112, 1.773 },
+		{ -0.448 ,0.2819, 1.789 },
+		{ -0.303 ,0.352, 1.802 }
+	};
+
+	glPushMatrix();
+
+	double amb[] = { 0, 0, 0 ,1 };
+	double dif[] = { 0.1, 0.35 , 0.1,1 };
+	double spec[] = { 0.45, 0.55, 0.45,1 };
+	double sh = 0.25;
+	Change_Material(amb, dif, spec, sh);
+
+	double x = 0.05;
+	double y = 0;
+	for (double z = 0.3; z <= 1.75; z+=0.125)
+	{	
+		x += 0.025;
+		y += 0.011;
+		glPushMatrix();
+		glTranslated(x,y,z);
+		glRotated(180, 0, 0, 1);
+		Kust.DrawObj();
+		glPopMatrix();
+	}
+	x = -0.05;
+	y = 0;
+	for (double z = 0.3; z <= 1.75; z += 0.125)
+	{
+		x -= 0.03;
+		y += 0.011;
+		glPushMatrix();
+		glTranslated(x, y, z);
+		glRotated(180, 0, 0, 1);
+		Kust.DrawObj();
+		glPopMatrix();
+	}
+
+	x = 0;
+	y = -0.03;
+	for (double z = 0.3; z <= 1.45; z += 0.125)
+	{
+		y -= 0.028;
+		glPushMatrix();
+		glTranslated(x, y, z);
+		glRotated(180, 0, 0, 1);
+		Kust.DrawObj();
+		glPopMatrix();
+	}
+	for (int i = 0; i <= 7; i++)
+	{
+		glPushMatrix();
+		glTranslated(coords[i][0], coords[i][1], coords[i][2]);
+		glRotated(180, 0, 0, 1);
+		Kust.DrawObj();
+		glPopMatrix();
+	}
+
+	
+	double amb2[] = { 0, 0, 0, 1 };
+	double dif2[] = { 0.5, 0.5 , 0,1 };
+	double spec2[] = { 0.8, 0.27, 0.07,1 };
+	double sh2 = 0.25;
+	Change_Material(amb2, dif2, spec2, sh2);
+
+	Tree2.DrawObj();
+
+	glPopMatrix();
+}
+//рисуем маленький домик
+void DrawningLittleHouse(double x, double y, double z,double angle)
+{
+	glEnable(GL_TEXTURE_2D);
+	
+	//рисует дом с забором
+	glPushMatrix();
+
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+
+	s[6].UseShader();
+	location = glGetUniformLocationARB(s[6].program, "light_pos");
+	glUniform3fARB(location, light.pos.X(), light.pos.Y(), light.pos.Z());
+
+	location = glGetUniformLocationARB(s[6].program, "Ia");
+	glUniform3fARB(location, 1, 1, 1);
+	location = glGetUniformLocationARB(s[6].program, "ma");
+	glUniform3fARB(location, 1, 1, 1);
+
+	location = glGetUniformLocationARB(s[6].program, "Id");
+	glUniform3fARB(location, 1, 1, 1);
+	location = glGetUniformLocationARB(s[6].program, "md");
+	glUniform3fARB(location, 0.6, 0.6, 0.6);
+
+	location = glGetUniformLocationARB(s[6].program, "Is");
+	glUniform3fARB(location, 1, 0.6, 0.01);
+	location = glGetUniformLocationARB(s[6].program, "ms");
+	glUniform4fARB(location, 1, 0.6, 0.01, 25.6);
+
+	location = glGetUniformLocationARB(s[6].program, "camera");
+	glUniform3fARB(location, camera.pos.X(), camera.pos.Y(), camera.pos.Z());
+
+	location = glGetUniformLocationARB(s[6].program, "Translate");
+	glUniform3fARB(location, x, y, z);
+
+	glActiveTexture(GL_TEXTURE2);
+	location = glGetUniformLocationARB(s[6].program, "iTexture2");
+	glUniform1iARB(location, 2);
+	LittleHouse_FonTex.bindTexture();
+
+	glActiveTexture(GL_TEXTURE1);
+	location = glGetUniformLocationARB(s[6].program, "iTexture1");
+	glUniform1iARB(location, 1);
+	LittleHouse_SpecTex.bindTexture();
+
+	glActiveTexture(GL_TEXTURE0);
+	location = glGetUniformLocationARB(s[6].program, "iTexture0");
+	glUniform1iARB(location, 0);
+	LittleHouse_Tex.bindTexture();
+
+	LittleHouse.DrawObj();
+
+	glDisable(GL_TEXTURE_2D);
+	Shader::DontUseShaders();
+
+	amb[0] = 0.15; amb[1] = 0.08; amb[2] = 0.01;
+	dif[0] = 0.5; dif[1] = 0.3; dif[2] = 0.05;
+	spec[0] = 0.2; spec[1] = 0.2; spec[2] = 0.2;
+	sh = 0.4;
+	Change_Material(amb,dif,spec,sh);
+
+	Zabor.DrawObj();
+;
+	glPopMatrix();
+}
+//рисуем квадратный домик
+void DrawningQuadHouse(double x, double y, double z, double angle)
+{
+	glEnable(GL_TEXTURE_2D);
+	glPushMatrix();
+
+	s[6].UseShader();
+	location = glGetUniformLocationARB(s[6].program, "light_pos");
+	glUniform3fARB(location, light.pos.X(), light.pos.Y(), light.pos.Z());
+
+	location = glGetUniformLocationARB(s[6].program, "Ia");
+	glUniform3fARB(location, 1, 1, 1);
+	location = glGetUniformLocationARB(s[6].program, "ma");
+	glUniform3fARB(location, 1, 1, 1);
+
+	location = glGetUniformLocationARB(s[6].program, "Id");
+	glUniform3fARB(location, 1, 1, 1);
+	location = glGetUniformLocationARB(s[6].program, "md");
+	glUniform3fARB(location, 0.6, 0.6, 0.6);
+
+	location = glGetUniformLocationARB(s[6].program, "Is");
+	glUniform3fARB(location, 1, 1, 1);
+	location = glGetUniformLocationARB(s[6].program, "ms");
+	glUniform4fARB(location, 1, 1, 1, 25.6);
+
+	location = glGetUniformLocationARB(s[6].program, "camera");
+	glUniform3fARB(location, camera.pos.X(), camera.pos.Y(), camera.pos.Z());
+
+	location = glGetUniformLocationARB(s[6].program, "Translate");
+	glUniform3fARB(location, x, y, z);
+
+	glActiveTexture(GL_TEXTURE2);
+	location = glGetUniformLocationARB(s[6].program, "iTexture2");
+	glUniform1iARB(location, 2);
+	QuadHouse_FonTex.bindTexture();
+
+	glActiveTexture(GL_TEXTURE1);
+	location = glGetUniformLocationARB(s[6].program, "iTexture1");
+	glUniform1iARB(location, 1);
+	QuadHouse_SpecTex.bindTexture();
+
+	glActiveTexture(GL_TEXTURE0);
+	location = glGetUniformLocationARB(s[6].program, "iTexture0");
+	glUniform1iARB(location, 0);
+	QuadHouse_Tex.bindTexture();
+
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+
+
+	QuadHouse.DrawObj();
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+
+	Shader::DontUseShaders();
+}
+//рисуем первый светофор
+void DrawningSvetofor1(double x, double y, double z, double angle)//рисуем светофор
+{
+	glEnable(GL_TEXTURE_2D);
+	glPushMatrix();
+
+	Svetofor_Tex.bindTexture();
+
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+	
+	
+
+	Svetofor.DrawObj();
+
+	glDisable(GL_TEXTURE_2D);
+
+	s[2].UseShader();
+
+	if (flag1 == 0)
+	{
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.15, 0.01, 0.01, 1);
+
+		Svetofor_red.DrawObj();
+
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.1, 0.95, 0.1, 1);
+
+		Svetofor_green.DrawObj();
+	}
+	else
+	{
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.95, 0.1, 0.1, 1);
+
+		Svetofor_red.DrawObj();
+
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.01, 0.15, 0.01, 1);
+
+		Svetofor_green.DrawObj();
+	}
+	glPopMatrix();
+
+	Shader::DontUseShaders();
+}
+//второй светофор
+void DrawningSvetofor2(double x, double y, double z, double angle)//рисуем светофор
+{
+
+	glPushMatrix();
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+
+	Svetofor_Tex.bindTexture();
+
+	Svetofor.DrawObj();
+
+	s[2].UseShader();
+
+	if (flag2 == 0)
+	{
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.15, 0.01, 0.01, 1);
+
+		Svetofor_red.DrawObj();
+
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.1, 0.95, 0.1, 1);
+
+		Svetofor_green.DrawObj();
+	}
+	else
+	{
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.95, 0.1, 0.1, 1);
+
+		Svetofor_red.DrawObj();
+
+		location = glGetUniformLocationARB(s[2].program, "Color");
+		glUniform4fARB(location, 0.01, 0.15, 0.01, 1);
+
+		Svetofor_green.DrawObj();
+	}
+	glPopMatrix();
+	Shader::DontUseShaders();
+}
+//рисуем дерево с перемещением
+void DrawningFullTree1(double x, double y, double z, double angle)
+{
+	glPushMatrix();
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+	DrawninTree1();
+	glPopMatrix();
+}
+//рисуем другое дерево с перемещением
+void DrawningFullTree2(double x, double y, double z, double angle)
+{
+	glPushMatrix();
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+	DrawninTree2();
+	glPopMatrix();
+}
+//рисуем станцию
+void DrawningStancia(double x, double y, double z, double angle)//рисуем станцию
+{
+
+	glPushMatrix();
+	glTranslated(x, y, z);
+	glRotated(angle, 0, 0, 1);
+
+	amb[0] = 0.15; amb[1] = 0.15; amb[2] = 0.15;
+	dif[0] = 0.5; dif[1] = 0.5; dif[2] = 0.5;
+	spec[0] = 0.2; spec[1] = 0.2; spec[2] = 0.2;
+	sh = 0.4;
+	Change_Material(amb, dif, spec, sh);
+
+	Budka.DrawObj();
+	Stancia_Floor2.DrawObj();
+	
+	amb[0] = 0.8; amb[1] = 0.6; amb[2] = 0.1;
+	dif[0] = 0.5; dif[1] = 0.5; dif[2] = 0.15;
+	spec[0] = 0.8; spec[1] = 0.8; spec[2] = 0.15;
+	sh = 0.4;
+	Change_Material(amb, dif, spec, sh);
+
+	Budka_Okno.DrawObj();
+	
+	amb[0] = 0.3; amb[1] = 0.2; amb[2] = 0.05;
+	dif[0] = 0.3; dif[1] = 0.2; dif[2] = 0.05;
+	spec[0] = 0.75; spec[1] = 0.6; spec[2] = 0.15;
+	sh = 0.8;
+	Change_Material(amb, dif, spec, sh);
+
+	Budka_Dver.DrawObj();
+	Stancia_Roof.DrawObj();
+	
+	
+	amb[0] = 0.15; amb[1] = 0.15; amb[2] = 0.15;
+	dif[0] = 0.4; dif[1] = 0.4; dif[2] = 0.4;
+	spec[0] = 0.2; spec[1] = 0.2; spec[2] = 0.2;
+	sh = 0.8;
+	
+	
+	Change_Material(amb, dif, spec, sh);
+	
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	Tex_Reklama.bindTexture();
+	Reklama.DrawObj(); 
 
 	glPopMatrix();
 
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 }
 
 void Render(OpenGL* ogl)
 {
-
 	tick_o = tick_n;
 	tick_n = GetTickCount();
 	Time = (tick_n - tick_o) / 1000.0;
@@ -938,8 +1401,9 @@ void Render(OpenGL* ogl)
 	//glLoadIdentity();
 
 	glEnable(GL_DEPTH_TEST);
-	if (textureMode)
-		glEnable(GL_TEXTURE_2D);
+	//if (textureMode)
+	//
+	//	glEnable(GL_TEXTURE_2D);
 
 	if (lightMode)
 	{	
@@ -948,137 +1412,180 @@ void Render(OpenGL* ogl)
 	//альфаналожение
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//настройка материала
-	GLfloat amb[] = { 0.1745, 0.01175, 0.01175,1};
-	GLfloat dif[] = { 0.61424, 0.04136 , 0.04136,1};
-	GLfloat spec[] = { 0.727811, 0.626959, 0.626959,1};
-	GLfloat sh = 0.4;
 	
-	//фоновая
-	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
-	//дифузная
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
-	//зеркальная
-	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
-	//размер блика
-	glMaterialf(GL_FRONT, GL_SHININESS, sh);
-
 	//===================================
 	//Прогать тут  
 
+	//рисуем землю
 
-	//
-	
-
-	s[0].UseShader();
-
-	//передача параметров в шейдер.  Шаг один - ищем адрес uniform переменной по ее имени. 
-	int location = glGetUniformLocationARB(s[0].program, "light_pos");
-	//Шаг 2 - передаем ей значение
+	s[4].UseShader();
+	location = glGetUniformLocationARB(s[4].program, "light_pos");
 	glUniform3fARB(location, light.pos.X(), light.pos.Y(), light.pos.Z());
-	
-	//location = glGetUniformLocationARB(s[0].program, "light_pos2");
-	////Шаг 2 - передаем ей значение
-	//glUniform3fARB(location, light.pos.X()+5, light.pos.Y()+5, light.pos.Z());
-	
-	location = glGetUniformLocationARB(s[0].program, "Ia");
-	glUniform3fARB(location, 0.2, 0.2, 0.05);
-	
-	location = glGetUniformLocationARB(s[0].program, "Id");
-	glUniform3fARB(location, 1.0, 1.0, 1.0);
-	
-	location = glGetUniformLocationARB(s[0].program, "Is");
-	glUniform3fARB(location, .3, .3, .3);
-	
-	
-	location = glGetUniformLocationARB(s[0].program, "ma");
-	glUniform3fARB(location, 0.2, 0.2, 0.05);
-	
-	location = glGetUniformLocationARB(s[0].program, "md");
-	glUniform3fARB(location, 0.6, 0.65, 0.3);
-	
-	location = glGetUniformLocationARB(s[0].program, "ms");
-	glUniform4fARB(location, 0.3, 0.3, 0.2, 25.6);
 
+	location = glGetUniformLocationARB(s[4].program, "Ia");
+	glUniform3fARB(location, 0.3, 0.3, 0.3);
+	location = glGetUniformLocationARB(s[4].program, "ma");
+	glUniform3fARB(location, 0.3, 0.3, 0.3);
 
-	//location = glGetUniformLocationARB(s[0].program, "Ia");
-	//glUniform3fARB(location, 0.1745, 0.01175, 0.01175);
-	//
-	//location = glGetUniformLocationARB(s[0].program, "Id");
-	//glUniform3fARB(location, 0.61424, 0.04136, 0.04136);
-	//
-	//location = glGetUniformLocationARB(s[0].program, "Is");
-	//glUniform3fARB(location, 0.727811, 0.626959, 0.626959);
-	//
-	//
-	//location = glGetUniformLocationARB(s[0].program, "ma");
-	//glUniform3fARB(location, 0.1745, 0.01175, 0.01175);
-	//
-	//location = glGetUniformLocationARB(s[0].program, "md");
-	//glUniform3fARB(location, 0.61424, 0.04136, 0.04136);
-	//
-	//location = glGetUniformLocationARB(s[0].program, "ms");
-	//glUniform4fARB(location, 0.727811, 0.626959, 0.626959, 25.6);
-	
-	location = glGetUniformLocationARB(s[0].program, "camera");
+	location = glGetUniformLocationARB(s[4].program, "Id");
+	glUniform3fARB(location, 0.5, 0.5, 0.5);
+	location = glGetUniformLocationARB(s[4].program, "md");
+	glUniform3fARB(location, 0.5, 0.5, 0.5);
+
+	location = glGetUniformLocationARB(s[4].program, "Is");
+	glUniform3fARB(location, 0.1, 0.1, 0.1);
+	location = glGetUniformLocationARB(s[4].program, "ms");
+	glUniform4fARB(location, 0.1, 0.1, 0.1, 25.6);
+
+	location = glGetUniformLocationARB(s[4].program, "camera");
 	glUniform3fARB(location, camera.pos.X(), camera.pos.Y(), camera.pos.Z());
 
+	glActiveTexture(GL_TEXTURE1);
+	location = glGetUniformLocationARB(s[4].program, "Texture1");
+	glUniform1iARB(location, 1);
+	Earth_Normal.bindTexture();
+
+	glActiveTexture(GL_TEXTURE0);
+	location = glGetUniformLocationARB(s[4].program, "Texture0");
+	glUniform1iARB(location, 0);
+	Earth_Tex.bindTexture();
+	glPushMatrix();
+	glTranslated(0, 0, -1.15);
 	Earth.DrawObj();
-	
+	Shader::DontUseShaders();
+	glPopMatrix();
 
-	//первый пистолет
-	//objModel.DrawObj();
 
-	//
-	//Tree.DrawObj();
-	
-	//glPushMatrix();
-	//glTranslated(-10,-5, 0);
-	//Tree.DrawObj();
-	//glPopMatrix();
-	//
-	//glPushMatrix();
-	//glTranslated(10, 5, 0);
-	//Tree.DrawObj();
-	//glPopMatrix();
+
+#pragma region Рисуем дома
+
+
+
+	DrawningQuadHouse(4.5, -13.5, 0, 0);
+	DrawningQuadHouse(-3.5, -12, 0, 0);
+	DrawningQuadHouse(-6, -13.5, 0, 0);
+	DrawningQuadHouse(0, 0, 0, 0);
+	DrawningQuadHouse(5, 0, 0, 0);
+	DrawningQuadHouse(5, 4, 0, 0);
+	DrawningQuadHouse(0, 4, 0, 0);
+	DrawningQuadHouse(-5, 0, 0, 0);
+	DrawningQuadHouse(-10, 0, 0, 0);
+	DrawningQuadHouse(-5, -3, 0, 0);
+	DrawningQuadHouse(-5, 4, 0, 0);
+	DrawningQuadHouse(0, -3, 0, 0);
+
+	DrawningLittleHouse(0, -13.5, 0, 0);
+	DrawningLittleHouse(18, 9, 0, 0);
+
+	DrawningQuadHouse(-10, -3, 0, 0);
+	DrawningQuadHouse(5, -3, 0, 0);
+	DrawningQuadHouse(5, 20, 0, 0);
+	DrawningQuadHouse(5, 24, 0, 0);
+	DrawningQuadHouse(5, 28, 0, 0);
+	DrawningQuadHouse(10, 20, 0, 0);
+	DrawningQuadHouse(10, 24, 0, 0);
+	DrawningQuadHouse(10, 28, 0, 0);
+	DrawningQuadHouse(15, 26, 0, 0);
+	DrawningQuadHouse(15, 22, 0, 0);
+
+#pragma endregion
+
+	glDisable(GL_TEXTURE_2D);
+
+	//рисует траву - лучше не использовать
+	//for (double i = -20; i < 20; i += 1)
+	//{
+	//	for (double j = -20; j < 20; j += 1)
+	//	{
+	//		glPushMatrix();
+	//		glTranslated(i, j, 0);
+	//		Kust.DrawObj();
+	//		glPopMatrix();
+	//	}
+	//}
+
+#pragma region Рисуем деревья
+
+	if (flag_der == 1)
+	{
+		DrawningFullTree2(1, 1.5, 0, 0);
+		DrawningFullTree2(0, 2, 0, 0);
+		DrawningFullTree2(2.5, 0, 0, 0);
+		DrawningFullTree2(-5, 2.2, 0, 0);
+		DrawningFullTree2(-9, -9, 0, 0);
+		DrawningFullTree2(-2, -8, 0, 0);
+		DrawningFullTree2(1.5, -8, 0, 0);
+
+		DrawningFullTree1(19, 14.5, 0, 0);
+		DrawningFullTree1(13, 10, 0, 0);
+		DrawningFullTree1(17, 5, 0, 0);
+		DrawningFullTree1(13, -5, 0, 0);
+
+		DrawningFullTree1(-13, -7, 0, 0);
+		DrawningFullTree1(-15, -5.5, 0, 0);
+		DrawningFullTree1(-15, 5, 0, 0);
+		DrawningFullTree1(10, 2.5, 0, 0);
+		DrawningFullTree1(22, 30, 0, 0);
+		DrawningFullTree1(11, 3, 0, 0);
+		DrawningFullTree1(8, 6, 0, 0);
+		DrawningFullTree1(7, 8, 0, 0);
+
+		DrawningFullTree1(0, 9, 0, 0);
+		DrawningFullTree1(2, 10, 0, 0);
+		DrawningFullTree1(1.5, 11.5, 0, 0);
+		DrawningFullTree1(-5, 9, 0, 0);
+		DrawningFullTree1(-6, 12, 0, 0);
+		DrawningFullTree1(3, 15, 0, 0);
+		DrawningFullTree1(-2, 17, 0, 0);
+		DrawningFullTree1(-2, 25, 0, 0);
+		DrawningFullTree1(6, 20, 0, 0);
+		DrawningFullTree1(8, 19, 0, 0);
+		DrawningFullTree1(9, 22, 0, 0);
+		DrawningFullTree1(8, 24, 0, 0);
+
+		DrawningFullTree2(-2, -3, 0, 0);
+		DrawningFullTree2(-2, -1, 0, 0);
+		DrawningFullTree2(-1.5, -2.5, 0, 0);
+	}
+#pragma endregion
+
+
+	Shader::DontUseShaders();
+	//рисуем рельсы
+
+	amb[0] = 0.15; amb[1] = 0.15; amb[2] = 0.15;
+	dif[0] = 0.4; dif[1] = 0.4; dif[2] = 0.4;
+	spec[0] = 0.8; spec[1] = 0.8; spec[2] = 0.8;
+	sh = 0.4;
+
+	Change_Material(amb, dif, spec, sh);
 
 	Relsi_path2();
 	Relsi_path();
+
+	//переключение светофоров
+	if (flag_animacia == 0)
+	{
+		glPushMatrix();
+		Anim1_Poezd();
+		glPopMatrix();
+	}
+	if (flag_animacia == 1)
+	{
+		glPushMatrix();
+		Anim2_Poezd();
+		glPopMatrix();
+	}
+
+	//рисуем станцию
+	Shader::DontUseShaders();
+	DrawningStancia(0,-9,0,0);
+	DrawningStancia(-1.3,20,0,90);
 	
-	Anim1_Poezd();
-	Anim2_Poezd();
-	
-	Kust.DrawObj();
-	//
-	QuadHouse.DrawObj();
-	
-
-
-	//Shader::DontUseShaders();
-	//glTranslated(-5, 15, 0);
-	//objModel.DrawObj();
-	
-	//второй, без шейдеров
-	//glPushMatrix();
-	//	glTranslated(-5,15,0);
-	//	//glScaled(-1.0,1.0,1.0);
-	//	objModel.DrawObj();
-	//glPopMatrix();
-
-
-
-
-
-
-	
-	
-
-	
-
-	
+	//рисуем светофоры
+	DrawningSvetofor1(3,-9.5,0,180);
+	DrawningSvetofor2(-1,15.5,0,90);
 }   //конец тела функции
-
 
 bool gui_init = false;
 

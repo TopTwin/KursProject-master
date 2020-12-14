@@ -1,6 +1,8 @@
+varying vec2 texCoord; 
 varying vec3 Normal;
 varying vec3 Position;
 
+uniform sampler2D iTexture0;
 
 uniform vec3 Ia;
 uniform vec3 Id;
@@ -14,8 +16,11 @@ uniform vec4 ms;
 
 uniform vec3 camera;
 
+vec4 texture0 = vec4(texture2D(iTexture0, texCoord).rgb, 1.0);
+
 void main(void)
 {
+    
 	gl_FragColor = vec4(0.0,0.0,0.0,1.0);
 	
 	vec3 color_amb = Ia*ma;
@@ -29,7 +34,7 @@ void main(void)
 	
 	
 	
-	gl_FragColor = vec4(color_amb + color_dif + color_spec,1.0);
+	gl_FragColor = vec4(texture0 * (color_amb + color_dif + color_spec),1.0);
 	
 	
 }
