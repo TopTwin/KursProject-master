@@ -306,16 +306,7 @@ int flag_der = 1;
 //обработчик нажатия кнопок клавиатуры
 void keyDownEvent(OpenGL *ogl, int key)
 {
-	if (OpenGL::isKeyPressed('L'))
-	{
-		lightMode = !lightMode;
-	}
-
-	if (OpenGL::isKeyPressed('T'))
-	{
-		textureMode = !textureMode;
-	}	   
-
+	
 	if (OpenGL::isKeyPressed('F'))
 	{
 		light.pos = camera.pos;
@@ -384,7 +375,7 @@ ObjFile Zabor;
 ObjFile Poezd, Relsi, Earth, Vagon;
 ObjFile Tree, Tree2, Kust;
 ObjFile Svetofor,Svetofor_red, Svetofor_green;
-ObjFile Budka, Budka_Okno, Stancia_Roof, Stancia_Floor2, Reklama, Budka_Dver;
+ObjFile Budka, Stancia_Roof, Stancia_Floor2, Reklama, Budka_Dver;
 
 Texture QuadHouse_Tex, QuadHouse_SpecTex, QuadHouse_FonTex, Poezd_Tex, Earth_Tex,Earth_Normal, QuadHouse_Normal;
 Texture Svetofor_Tex, LittleHouse_Tex, LittleHouse_SpecTex, LittleHouse_FonTex;
@@ -536,7 +527,6 @@ void initRender(OpenGL *ogl)
 	Svetofor_Tex.bindTexture();
 
 	loadModel("models\\Budka.obj", &Budka);			//станция
-	loadModel("models\\Budka_Okno.obj", &Budka_Okno);
 	loadModel("models\\Budka_Dver.obj", &Budka_Dver);
 	loadModel("models\\Stancia_Floor.obj", &Stancia_Roof);
 	loadModel("models\\Stancia_Floor2.obj", &Stancia_Floor2);
@@ -553,7 +543,7 @@ void initRender(OpenGL *ogl)
 
 	rec.setSize(300, 100);
 	rec.setPosition(10, ogl->getHeight() - 100-10);
-	rec.setText("T - вкл/выкл текстур\nL - вкл/выкл освещение\nF - Свет из камеры\nG - двигать свет по горизонтали\nG+ЛКМ двигать свет по вертекали",0,0,0);
+	rec.setText("F - Свет из камеры\nG - двигать свет по горизонтали\nG+ЛКМ двигать свет по вертекали\nZ - Переключение светофора №1\nC - Переключение светофора №2\nS - Вкл/выкл деревья",0,0,0);
 
 	
 }
@@ -1339,14 +1329,6 @@ void DrawningStancia(double x, double y, double z, double angle)//рисуем станцию
 
 	Budka.DrawObj();
 	Stancia_Floor2.DrawObj();
-	
-	amb[0] = 0.8; amb[1] = 0.6; amb[2] = 0.1;
-	dif[0] = 0.5; dif[1] = 0.5; dif[2] = 0.15;
-	spec[0] = 0.8; spec[1] = 0.8; spec[2] = 0.15;
-	sh = 0.4;
-	Change_Material(amb, dif, spec, sh);
-
-	Budka_Okno.DrawObj();
 	
 	amb[0] = 0.3; amb[1] = 0.2; amb[2] = 0.05;
 	dif[0] = 0.3; dif[1] = 0.2; dif[2] = 0.05;
