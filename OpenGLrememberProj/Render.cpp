@@ -477,12 +477,12 @@ void initRender(OpenGL *ogl)
 	 //так как гит игнорит модели *.obj файлы, так как они совпадают по расширению с объектными файлами, 
 	 // создающимис€ во врем€ компил€ции, € переименовал модели в *.obj_m
 	
-	 loadModel("models\\Poezd.obj", &Poezd);
+	 loadModel("models\\Poezd.obj_m", &Poezd);
 	 Poezd_Tex.loadTextureFromFile("textures//Poezd_Tex.bmp");
 	 Poezd_Tex.bindTexture();
 
 
-	 loadModel("models\\QuadHouse.obj", &QuadHouse);
+	 loadModel("models\\QuadHouse.obj_m", &QuadHouse);
 	 QuadHouse_Tex.loadTextureFromFile("textures//Tex_QuadHouse.bmp");
 	 QuadHouse_Tex.bindTexture();
 	 glEnable(GL_TEXTURE1);
@@ -494,7 +494,7 @@ void initRender(OpenGL *ogl)
 
 	 glEnable(GL_TEXTURE0);
 
-	 loadModel("models\\LittleHouse.obj", &LittleHouse);		//маленький дом
+	 loadModel("models\\LittleHouse.obj_m", &LittleHouse);		//маленький дом
 	 LittleHouse_Tex.loadTextureFromFile("textures//Tex_LittleHouse.bmp");
 	 LittleHouse_Tex.bindTexture();
 	 glEnable(GL_TEXTURE1);
@@ -506,11 +506,11 @@ void initRender(OpenGL *ogl)
 
 	 glEnable(GL_TEXTURE0);
 
-	 loadModel("models\\Zabor.obj", &Zabor);
+	 loadModel("models\\Zabor.obj_m", &Zabor);
 	
-	 loadModel("models\\relsa.obj", &Relsi);		//рельсы
+	 loadModel("models\\relsa.obj_m", &Relsi);		//рельсы
 
-	 loadModel("models\\earth.obj", &Earth);		//«емл€
+	 loadModel("models\\earth.obj_m", &Earth);		//«емл€
 	 Earth_Tex.loadTextureFromFile("textures//Earth_Tex.bmp");
 	 Earth_Tex.bindTexture();
 
@@ -520,23 +520,23 @@ void initRender(OpenGL *ogl)
 
 	 glEnable(GL_TEXTURE0);
 	
-	loadModel("models\\svetofor.obj", &Svetofor);					//светофор
-	loadModel("models\\svetofor_red.obj", &Svetofor_red);
-	loadModel("models\\svetofor_green.obj", &Svetofor_green);
+	loadModel("models\\svetofor.obj_m", &Svetofor);					//светофор
+	loadModel("models\\svetofor_red.obj_m", &Svetofor_red);
+	loadModel("models\\svetofor_green.obj_m", &Svetofor_green);
 	Svetofor_Tex.loadTextureFromFile("textures//Svetofor.bmp");
 	Svetofor_Tex.bindTexture();
 
-	loadModel("models\\Budka.obj", &Budka);			//станци€
-	loadModel("models\\Budka_Dver.obj", &Budka_Dver);
-	loadModel("models\\Stancia_Floor.obj", &Stancia_Roof);
-	loadModel("models\\Stancia_Floor2.obj", &Stancia_Floor2);
-	loadModel("models\\Reklama.obj", &Reklama);
+	loadModel("models\\Budka.obj_m", &Budka);			//станци€
+	loadModel("models\\Budka_Dver.obj_m", &Budka_Dver);
+	loadModel("models\\Stancia_Floor.obj_m", &Stancia_Roof);
+	loadModel("models\\Stancia_Floor2.obj_m", &Stancia_Floor2);
+	loadModel("models\\Reklama.obj_m", &Reklama);
 	Tex_Reklama.loadTextureFromFile("textures//Reklama.bmp");
 	Tex_Reklama.bindTexture();
 	
-	loadModel("models\\Tree.obj", &Tree);			//дерево
-	loadModel("models\\Tree2.obj", &Tree2);
-	loadModel("models\\kust.obj", &Kust);
+	loadModel("models\\Tree.obj_m", &Tree);			//дерево
+	loadModel("models\\Tree2.obj_m", &Tree2);
+	loadModel("models\\kust.obj_m", &Kust);
 
 	tick_n = GetTickCount();
 	tick_o = tick_n;
@@ -1257,6 +1257,7 @@ void DrawningSvetofor1(double x, double y, double z, double angle)//рисуем свето
 //второй светофор
 void DrawningSvetofor2(double x, double y, double z, double angle)//рисуем светофор
 {
+	glEnable(GL_TEXTURE_2D);
 
 	glPushMatrix();
 	glTranslated(x, y, z);
